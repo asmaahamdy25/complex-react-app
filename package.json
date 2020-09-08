@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "Small project for react",
   "main": "main.js",
+  "homepage": "https://asmaahamdy25.github.io/complex-react-app/",
   "scripts": {
     "test": "no",
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server",
+    "predeploy": "npm run build",
+  "deploy": "gh-pages -d build"
   },
   "author": "",
   "license": "ISC",
