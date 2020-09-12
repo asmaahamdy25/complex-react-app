@@ -12,6 +12,7 @@ import SinglePost from './components/SinglePost'
 import Profile from './components/Profile'
 import FlashMessage  from './components/FlashMessage'
 import EditPost from './components/EditProfile'
+import NotFound from './components/NotFound'
 import Axios from'axios'
 Axios.defaults.baseURL = 'http://localhost:8080'
 import StateContext from "./StateContext"
@@ -87,6 +88,9 @@ function MainComponent(){
            </Route>
            <Route path="/post/:id/edit" exact>
            <EditPost/>
+           </Route>
+           <Route>
+             <NotFound/>
            </Route>
        </Switch>
 

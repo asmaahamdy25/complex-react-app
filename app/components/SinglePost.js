@@ -1,24 +1,51 @@
-import React ,{useEffect,useState} from 'react';
+import React ,{useEffect,useState , useContext} from 'react';
 import Pages from './pages'
-import {useParams , Link} from 'react-router-dom'
+import {useParams , Link , withRouter} from 'react-router-dom'
 import Axios from 'axios'
 import LoadingDotsIcons from './LoadingDotsIcons'
 import ReactMarkDown from 'react-markdown'
 import ReactTooltip  from 'react-tooltip'
+import NotFound from './NotFound'
+import StateContext from '../StateContext'
+import DispatchContext from '../DispatchContext'
 
-function SinglePost(){
+function SinglePost(props){
+  const appState = useContext(StateContext);
+  const dispatchApp = useContext(DispatchContext)
   const {id}=useParams();
   const [post ,setPost] = useState();
   const [isloading ,setIsLoading] = useState(true);
   useEffect(()=>{
     Axios.get(`/post/${id}`).then(res =>{
-        console.log(res);
         setPost(res.data)
         setIsLoading(false)
        
     })
 
 },[])
+
+function isOwner(){
+  if(appState.loggedIn){
+    return appState.user.username == post.author.username
+  }
+  return false
+}
+
+function  handelDeletePost(){
+  const areYouSure = window.confirm('Are you sure to delete this post');
+
+  if(areYouSure){ 
+    Axios.delete(`/post/${id}`,{ data: {token : appState.user.token}}).then(res=>{
+
+      if(res.data == 'Success'){
+        dispatchApp({type :'flashMessage' , value:'Post was successfully deleted '});
+        props.history.push(`/profile/${appState.user.username}`)
+      }
+    });
+  }
+}
+ 
+if(!isloading && !post) return(<NotFound/>)
 if(isloading) return( <Pages title="..."><LoadingDotsIcons/></Pages>)
 const createdDate = new Date(post.createdDate);
 const dateFormate = `${createdDate.getMonth()+1} / ${createdDate.getDay()}/ ${createdDate.getFullYear()}`
@@ -26,12 +53,15 @@ const dateFormate = `${createdDate.getMonth()+1} / ${createdDate.getDay()}/ ${cr
         <Pages title={post.title}>
         <div className="d-flex justify-content-between">
         <h2>{post.title}</h2>
-        <span className="pt-2">
-          <Link to={`/post/${post._id}/edit`} className="text-primary mr-2" data-tip="Edit" data-for="edit"><i className="fas fa-edit"></i></Link>
-          <ReactTooltip id="edit"/>
-          <a className="delete-post-button text-danger" data-tip="Delete" data-for="delete"><i className="fas fa-trash"></i></a>
-          <ReactTooltip id="delete"/>
-        </span>
+        {isOwner() &&
+                <span className="pt-2">
+                <Link to={`/post/${post._id}/edit`} className="text-primary mr-2" data-tip="Edit" data-for="edit"><i className="fas fa-edit"></i></Link>
+                <ReactTooltip id="edit"/>
+                <a className="delete-post-button text-danger" onClick={handelDeletePost} data-tip="Delete" data-for="delete"><i className="fas fa-trash"></i></a>
+                <ReactTooltip id="delete"/>
+              </span>
+        }
+
       </div>
 
       <p className="text-muted small mb-4">
@@ -50,4 +80,4 @@ const dateFormate = `${createdDate.getMonth()+1} / ${createdDate.getDay()}/ ${cr
     )
 }
 
-export default SinglePost
+export default withRouter(SinglePost)
