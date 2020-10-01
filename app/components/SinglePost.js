@@ -22,7 +22,7 @@ function SinglePost(props){
        
     })
 
-},[])
+},[id])
 
 function isOwner(){
   if(appState.loggedIn){

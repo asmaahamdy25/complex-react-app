@@ -14,7 +14,6 @@ function CreatePost(props){
     function HandelCreate(e){
         e.preventDefault();
         Axios.post('/create-post',{title,body,token:appState.user.token}).then(res=>{
-            console.log(res);
             appDispatch({ type: "flashMessage", value: "Congrats, you created a new post." })
             props.history.push(`/post/${res.data}`)
             
