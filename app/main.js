@@ -18,7 +18,7 @@ const Search = React.lazy(() => import("./components/Search"))
 import LoadingDotsIcons from './components/LoadingDotsIcons'
 import { CSSTransition } from 'react-transition-group'
 import Axios from 'axios'
-Axios.defaults.baseURL = 'http://localhost:8080'
+Axios.defaults.baseURL = process.env.BACKENDURL || ""
 import StateContext from "./StateContext"
 import DispatchContext from "./DispatchContext"
 import { useImmerReducer } from "use-immer"
